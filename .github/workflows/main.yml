@@ -38,3 +38,21 @@ jobs:
           tags: |
             lucasterrab/kube-news:latest
             lucasterrab/kube-news:${{github.run_number}}
+  CD:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Kubernetes Set Context
+        uses: Azure/k8s-set-context@v3.0
+        with:
+          method: kubeconfig
+          kubeconfig: ${{secrets.K8S_CONFIG}}
+          
+      - name: Deploy to Kubernetes cluster
+        uses: Azure/k8s-deploy@v4.3
+        with:
+          image: lucasterrab/kube-news:${{github.run_number}}
+          manifests: |
+            k8s/deployment.yaml
